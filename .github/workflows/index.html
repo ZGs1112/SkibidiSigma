@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Personal Website</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: radial-gradient(1200px 800px at 10% 20%, #1b253a 0%, #0e1320 55%, #0b0f1a 100%);
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --primary: #60a5fa;
+      --accent: #a78bfa;
+      --glow: 0 0 35px rgba(96,165,250,.35), 0 0 65px rgba(167,139,250,.25);
+      --radius: 1.25rem;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,'Noto Sans',sans-serif; color:var(--text);
+      background: var(--bg);
+      background-attachment: fixed; 
+    }
+    a{color:inherit; text-decoration:none}
+
+    /* ====== NAVBAR ====== */
+    .nav{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(120%) blur(6px);
+      background:rgba(15,19,28,.45); border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav-inner{max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:.8rem 1rem}
+    .brand{display:flex; align-items:center; gap:.6rem; font-weight:700; letter-spacing:.5px}
+    .brand-badge{width:34px; height:34px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--accent)); box-shadow: var(--glow)}
+
+    .nav-actions{display:flex; gap:.5rem; flex-wrap:wrap}
+    .nav-btn{
+      position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.6rem 1rem; border-radius:999px; border:1px solid rgba(255,255,255,.1);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      cursor:pointer; user-select:none;
+      overflow:hidden;
+    }
+    .nav-btn:hover{ transform: translateY(-2px); box-shadow: var(--glow); border-color:rgba(255,255,255,.2) }
+    .nav-btn:active{ transform: translateY(0) scale(.98) }
+    .nav-btn .dot{width:6px; height:6px; border-radius:50%; background:currentColor}
+
+    /* Ripple effect */
+    .nav-btn::after{
+      content:""; position:absolute; inset:0; background:radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,.15), transparent 45%);
+      opacity:0; transition:opacity .25s ease;
+    }
+    .nav-btn:hover::after{opacity:1}
+
+    /* ====== HERO ====== */
+    .hero{max-width:1100px; margin:2.5rem auto; padding:0 1rem; display:grid; grid-template-columns:1.2fr .8fr; gap:2rem; align-items:center}
+    .hero h1{font-size:clamp(2rem, 4vw, 3rem); line-height:1.1; margin:.2rem 0 .8rem}
+    .lead{color:var(--muted); max-width:60ch}
+    .cta{margin-top:1.25rem; display:flex; gap:.75rem; flex-wrap:wrap}
+    .btn{
+      padding:.9rem 1.1rem; border-radius:.9rem; border:1px solid rgba(255,255,255,.1); cursor:pointer; font-weight:600;
+      background:linear-gradient(135deg, rgba(96,165,250,.18), rgba(167,139,250,.18));
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover{ transform: translateY(-2px); box-shadow: var(--glow) }
+    .btn.secondary{ background:rgba(255,255,255,.05) }
+
+    .hero-card{position:relative; border-radius:var(--radius); overflow:hidden; aspect-ratio: 4/3; background:#0f172a; border:1px solid rgba(255,255,255,.06)}
+    .hero-card img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.2)}
+    .hero-card::after{ content:""; position:absolute; inset:0; background:radial-gradient(800px 400px at 10% 10%, rgba(96,165,250,.25), transparent); pointer-events:none}
+
+    /* ====== SECTION WRAPPER ====== */
+    section{max-width:1100px; margin:3.5rem auto; padding:0 1rem}
+    .section-title{font-size:1.6rem; margin:0 0 1rem; letter-spacing:.3px}
+    .muted{color:var(--muted)}
+
+    /* ====== GALLERY ====== */
+    .grid{display:grid; grid-template-columns:repeat(1,minmax(0,1fr)); gap:1.1rem}
+    @media (min-width:640px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media (min-width:920px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+
+    /* base tilt card */
+    .tilt{
+      position:relative; border-radius:var(--radius); overflow:hidden; transform-style:preserve-3d;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08); aspect-ratio: 4/3; cursor:pointer;
+      transition: transform 0.35s cubic-bezier(.2,.9,.2,1), box-shadow 0.35s ease, border-color 0.35s ease;
+      will-change: transform;
+    }
+    .tilt:hover{ box-shadow: var(--glow); border-color: rgba(255,255,255,.18) }
+
+    /* subtle always-on pulse to feel alive (low intensity) */
+    .tilt::before{
+      content:''; position:absolute; inset: -10%; border-radius:inherit; pointer-events:none;
+      background:radial-gradient(400px 200px at 10% 20%, rgba(96,165,250,.03), transparent 25%);
+      opacity: .6; transition: opacity .4s ease, transform .4s ease;
+      transform: scale(1);
+    }
+    .tilt:hover::before{ opacity:1; transform: scale(1.02) }
+
+    /* image, shine and label layering */
+    .tilt img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform: translateZ(40px) scale(1); transition: transform 0.35s cubic-bezier(.2,.9,.2,1); }
+    .tilt .shine{ position:absolute; inset:-40%; background: radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,.35), rgba(255,255,255,.06) 28%, transparent 60%); mix-blend-mode: overlay; pointer-events:none; transform: translateZ(60px); opacity:.35; transition: opacity .25s ease, transform .25s ease; }
+    .tilt .label{ position:absolute; left:.9rem; bottom:.9rem; padding:.35rem .6rem; border-radius:.6rem; font-size:.85rem; font-weight:600; color:#0b0f1a; background:linear-gradient(135deg, #93c5fd, #c4b5fd); transform: translateZ(80px) translateY(0); transition: transform 0.35s ease, opacity .25s ease }
+
+    /* active (hovered/tapped) state - makes card come to life */
+    .tilt.active{ animation: floaty 3s ease-in-out infinite alternate; }
+    .tilt.active img{ transform: translateZ(90px) scale(1.08); }
+    .tilt.active .label{ transform: translateZ(120px) translateY(-4px) scale(1.04); }
+    .tilt.active .shine{ transform: translateZ(110px); opacity:.65 }
+
+    @keyframes floaty{
+      0%{ transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(0px) }
+      100%{ transform: perspective(900px) rotateX(-2deg) rotateY(2deg) translateY(-6px) }
+    }
+
+    /* ====== ABOUT ====== */
+    .about{ display:grid; grid-template-columns:1fr; gap:1.2rem }
+    @media (min-width:860px){ .about{ grid-template-columns: 1.2fr .8fr } }
+    .card{ background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); padding:1.1rem }
+
+    /* ====== CONTACT ====== */
+    form{ display:grid; gap:.8rem }
+    input, textarea{
+      width:100%; padding:.85rem 1rem; border-radius:.8rem; border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04); color:var(--text); font:inherit; outline:none;
+    }
+    input:focus, textarea:focus{ border-color:rgba(255,255,255,.28); box-shadow:0 0 0 4px rgba(96,165,250,.15) }
+    textarea{ min-height:120px; resize:vertical }
+
+    /* ====== FOOTER ====== */
+    footer{ padding:2rem 1rem 3rem; color:var(--muted); text-align:center }
+
+    /* Reduce motion preference */
+    @media (prefers-reduced-motion: reduce){
+      .tilt, .nav-btn, .btn{ transition: none }
+      .tilt.active{ animation: none }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== NAV ===== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#home" class="brand">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <span>MySite</span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-btn" href="#home"><span class="dot"></span> Home</a>
+        <a class="nav-btn" href="#gallery"><span class="dot"></span> Gallery</a>
+        <a class="nav-btn" href="#about"><span class="dot"></span> About</a>
+        <a class="nav-btn" href="#contact"><span class="dot"></span> Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header id="home" class="hero">
+    <div>
+      <h1>Hello, I'm <span style="background:linear-gradient(135deg,var(--primary),var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent">Rich</span> 👋</h1>
+      <p class="lead">This is my clean, modern personal website built with just HTML, CSS, and JavaScript — featuring a 3D animated image gallery and slick navigation buttons.</p>
+      <div class="cta">
+        <a class="btn" href="#gallery">See the 3D Gallery</a>
+        <a class="btn secondary" href="#about">Learn About Me</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1400&auto=format&fit=crop" alt="Laptop on desk" />
+    </div>
+  </header>
+
+  <!-- ===== GALLERY ===== -->
+  <section id="gallery">
+    <h2 class="section-title">3D Hover Gallery</h2>
+    <p class="muted" style="margin-bottom:1rem">Hover or tap on the cards. Move your mouse around each card to tilt it in 3D.</p>
+
+    <div class="grid">
+      <!-- Card 1 -->
+      <figure class="tilt" data-tilt>
+        <img src="https://i.ytimg.com/vi/aWOdllk6u2U/maxresdefault.jpg" alt="Sunset mountain" />
+        <span class="shine" aria-hidden="true"></span>
+        <figcaption class="label">Travel</figcaption>
+      </figure>
+      <!-- Card 2 -->
+      <figure class="tilt" data-tilt>
+        <img src="https://xclcamps.com/wp-content/uploads/coding-difference-1.jpg" alt="Code editor" />
+        <span class="shine" aria-hidden="true"></span>
+        <figcaption class="label">Coding</figcaption>
+      </figure>
+      <!-- Card 3 -->
+      <figure class="tilt" data-tilt>
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/049/855/296/small_2x/nature-background-high-resolution-wallpaper-for-a-serene-and-stunning-view-photo.jpg" alt="Forest" />
+        <span class="shine" aria-hidden="true"></span>
+        <figcaption class="label">Nature</figcaption>
+      </figure>
+      <!-- Card 4 -->
+      <figure class="tilt" data-tilt>
+        <img src="https://i.ebayimg.com/images/g/iVoAAOSwS49hzfyC/s-l400.jpg" alt="Tech gadgets" />
+        <span class="shine" aria-hidden="true"></span>
+        <figcaption class="label">Collections</figcaption>
+      </figure>
+      <!-- Card 5 -->
+      <figure class="tilt" data-tilt>
+        <img src="https://t4.ftcdn.net/jpg/01/16/61/93/360_F_116619399_YA611bKNOW35ffK0OiyuaOcjAgXgKBui.jpg" alt="Coffee" />
+        <span class="shine" aria-hidden="true"></span>
+        <figcaption class="label">Coffee</figcaption>
+      </figure>
+      <!-- Card 6 -->
+      <figure class="tilt" data-tilt>
+        <img src="https://images.stockcake.com/public/9/b/5/9b5fcb58-2c91-4b6c-86c1-3ea0f48fc717_large/cosmic-space-galaxy-stockcake.jpg" alt="Stars" />
+        <span class="shine" aria-hidden="true"></span>
+        <figcaption class="label">Space</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about">
+    <h2 class="section-title">About Me</h2>
+    <div class="about">
+      <div class="card">
+        <p>Hey! I'm <strong>Rich</strong>, a curious human who enjoys building things for the web. I love clean UI, smooth animations, and learning new tech. When I'm not coding, I'm exploring cafes and taking photos.</p>
+
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Skills</h3>
+        <ul style="margin:0; padding-left:1.1rem; line-height:1.8">
+          <li>HTML, CSS (Grid/Flexbox), JavaScript</li>
+          <li>Responsive & accessible design</li>
+          <li>Basic Node.js & Git</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact">
+    <h2 class="section-title">Contact</h2>
+    <div class="card">
+      <form onsubmit="event.preventDefault(); alert('Thanks! Your message has been sent (demo).')">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:.8rem">
+          <input required name="name" placeholder="Your name" />
+          <input required type="email" name="email" placeholder="Email" />
+        </div>
+        <textarea required name="message" placeholder="Your message"></textarea>
+        <button class="btn" type="submit">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> OneClick • Built with ❤️ using HTML, CSS & JS
+  </footer>
+
+  <script>
+    // ===== YEAR =====
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===== NAV ripple position (for .nav-btn::after) =====
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('pointermove', e => {
+        const rect = btn.getBoundingClientRect();
+        btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+        btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
+      });
+    });
+
+    // ===== 3D TILT EFFECT (enhanced) =====
+    const MAX_TILT = 14;          // degrees
+    const Z_POP = 90;             // extra translateZ on hover for "alive" feel
+    const RESET_MS = 260;         // animation back to neutral
+
+    const cards = document.querySelectorAll('[data-tilt]');
+
+    function setTransform(el, rx, ry){
+      el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    }
+
+    function handlePointerMove(e){
+      const el = e.currentTarget;
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      // if touch event, use changedTouches
+      const clientX = e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX) ?? (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientX);
+      const clientY = e.clientY ?? (e.touches && e.touches[0] && e.touches[0].clientY) ?? (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientY);
+      const dx = (clientX - cx) / (rect.width/2);
+      const dy = (clientY - cy) / (rect.height/2);
+      const ry = dx * MAX_TILT;  // rotateY left-right
+      const rx = -dy * MAX_TILT; // rotateX up-down
+      setTransform(el, rx, ry);
+      // move the shine
+      const shine = el.querySelector('.shine');
+      if(shine){
+        shine.style.setProperty('--x', `${((dx+1)/2)*100}%`);
+        shine.style.setProperty('--y', `${((dy+1)/2)*100}%`);
+      }
+    }
+
+    function handleEnter(e){
+      const el = e.currentTarget;
+      // enable quick transition when entering
+      el.style.transition = 'transform 140ms ease-out';
+      el.classList.add('active');
+      // pop children forward smoothly
+      el.querySelectorAll('img,.label,.shine').forEach(child => {
+        child.style.transition = 'transform 260ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease';
+        if(child.classList && child.classList.contains('shine')){
+          child.style.transform = `translateZ(${Z_POP + 20}px)`;
+          child.style.opacity = '.75';
+        } else if(child.tagName === 'IMG'){
+          child.style.transform = `translateZ(${Z_POP}px) scale(1.08)`;
+        } else {
+          child.style.transform = `translateZ(${Z_POP + 30}px) translateY(-4px) scale(1.04)`;
+        }
+      });
+    }
+
+    function handleLeave(e){
+      const el = e.currentTarget;
+      el.style.transition = `transform ${RESET_MS}ms ease`;
+      setTransform(el, 0, 0);
+      el.classList.remove('active');
+      el.querySelectorAll('img,.label,.shine').forEach(child => {
+        child.style.transition = `transform ${RESET_MS}ms ease, opacity ${RESET_MS}ms ease`;
+        // reset transform to the base state (we used translateZ(40px) in CSS for images)
+        if(child.classList && child.classList.contains('shine')){
+          child.style.transform = 'translateZ(60px)';
+          child.style.opacity = '.35';
+        } else if(child.tagName === 'IMG'){
+          child.style.transform = 'translateZ(40px) scale(1)';
+        } else {
+          child.style.transform = 'translateZ(80px) translateY(0) scale(1)';
+        }
+      });
+    }
+
+    // Attach listeners (skip if user prefers reduced motion)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduced){
+      cards.forEach(card => {
+        card.addEventListener('pointermove', handlePointerMove);
+        card.addEventListener('pointerenter', handleEnter);
+        card.addEventListener('pointerleave', handleLeave);
+        // Touch: tap pop for touch devices
+        card.addEventListener('click', () => {
+          card.animate([
+            { transform: 'perspective(900px) rotateX(0) rotateY(0)' },
+            { transform: 'perspective(900px) rotateX(3deg) rotateY(-3deg)' },
+            { transform: 'perspective(900px) rotateX(0) rotateY(0)' }
+          ], { duration: 260, easing: 'ease-out' });
+        }, { passive: true });
+      });
+    }
+
+    // Improve performance: pause transforms if not visible
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const el = entry.target;
+        if(!entry.isIntersecting){ el.style.transition = 'transform 0s'; setTransform(el,0,0); }
+      });
+    }, { threshold: 0.05 });
+    cards.forEach(c => io.observe(c));
+
+    // tiny accessibility: keyboard focus should also trigger a subtle pop
+    cards.forEach(card => {
+      card.setAttribute('tabindex','0');
+      card.addEventListener('focus', handleEnter);
+      card.addEventListener('blur', handleLeave);
+    });
+  </script>
+</body>
+</html>
